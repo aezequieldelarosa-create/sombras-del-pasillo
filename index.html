@@ -1,0 +1,195 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cazador de Monedas</title>
+
+<style>
+body {
+    background: #101820;
+    color: white;
+    font-family: Arial;
+    text-align: center;
+}
+
+h1 {
+    color: #ffd700;
+}
+
+#juego {
+    width: 320px;
+    height: 400px;
+    max-width: 90vw;
+    margin: auto;
+    position: relative;
+    overflow: hidden;
+    background: linear-gradient(#176b45, #092d20);
+    border: 4px solid #ffd700;
+    border-radius: 10px;
+}
+
+#jugador, #moneda, #bomba {
+    position: absolute;
+    font-size: 30px;
+}
+
+#jugador {
+    left: 140px;
+    top: 330px;
+}
+
+#moneda {
+    left: 100px;
+    top: 100px;
+}
+
+#bomba {
+    left: 220px;
+    top: 150px;
+}
+
+button {
+    background: #ffd700;
+    color: #101820;
+    border: none;
+    padding: 12px 18px;
+    margin: 5px;
+    border-radius: 8px;
+    font-size: 17px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+button:hover {
+    background: orange;
+}
+
+#mensaje {
+    color: #ffd700;
+    font-weight: bold;
+}
+</style>
+</head>
+
+<body>
+
+<h1>🪙 CAZADOR DE MONEDAS</h1>
+
+<p>Juntá las monedas y evitá las bombas.</p>
+
+<p id="puntos">Puntos: 0</p>
+
+<div id="juego">
+    <div id="jugador">🧑</div>
+    <div id="moneda">🪙</div>
+    <div id="bomba">💣</div>
+</div>
+
+<p id="mensaje">¡Empezá a jugar!</p>
+
+<p>Usá las flechas o los botones.</p>
+
+<div>
+    <button onclick="mover(-20,0)">⬅️</button>
+    <button onclick="mover(0,-20)">⬆️</button>
+    <button onclick="mover(0,20)">⬇️</button>
+    <button onclick="mover(20,0)">➡️</button>
+</div>
+
+<button onclick="reiniciar()">🔄 Reiniciar</button>
+
+<script>
+let x = 140;
+let y = 330;
+let puntos = 0;
+let jugando = true;
+
+let jugador = document.getElementById("jugador");
+let moneda = document.getElementById("moneda");
+let bomba = document.getElementById("bomba");
+let mensaje = document.getElementById("mensaje");
+let textoPuntos = document.getElementById("puntos");
+
+function mover(dx, dy) {
+    if (jugando == false) {
+        return;
+    }
+
+    x = x + dx;
+    y = y + dy;
+
+    if (x < 0) x = 0;
+    if (x > 280) x = 280;
+    if (y < 0) y = 0;
+    if (y > 360) y = 360;
+
+    jugador.style.left = x + "px";
+    jugador.style.top = y + "px";
+
+    revisar();
+}
+
+document.addEventListener("keydown", function(evento) {
+    if (evento.key == "ArrowLeft") mover(-20, 0);
+    if (evento.key == "ArrowRight") mover(20, 0);
+    if (evento.key == "ArrowUp") mover(0, -20);
+    if (evento.key == "ArrowDown") mover(0, 20);
+});
+
+function revisar() {
+    let mx = parseInt(moneda.style.left || "100");
+    let my = parseInt(moneda.style.top || "100");
+
+    let bx = parseInt(bomba.style.left || "220");
+    let by = parseInt(bomba.style.top || "150");
+
+    if (Math.abs(x - mx) < 25 &&
+        Math.abs(y - my) < 25) {
+
+        puntos = puntos + 10;
+        textoPuntos.textContent = "Puntos: " + puntos;
+
+        moneda.style.left = Math.floor(Math.random() * 280) + "px";
+        moneda.style.top = Math.floor(Math.random() * 350) + "px";
+
+        mensaje.textContent = "¡Conseguiste una moneda!";
+    }
+
+    if (Math.abs(x - bx) < 25 &&
+        Math.abs(y - by) < 25) {
+
+        jugando = false;
+        mensaje.textContent = "💥 GAME OVER";
+        return;
+    }
+
+    if (puntos >= 100) {
+        jugando = false;
+        mensaje.textContent = "🏆 ¡GANASTE!";
+    }
+}
+
+function reiniciar() {
+    x = 140;
+    y = 330;
+    puntos = 0;
+    jugando = true;
+
+    jugador.style.left = "140px";
+    jugador.style.top = "330px";
+
+    moneda.style.left = "100px";
+    moneda.style.top = "100px";
+
+    bomba.style.left = "220px";
+    bomba.style.top = "150px";
+
+    textoPuntos.textContent = "Puntos: 0";
+    mensaje.textContent = "¡Empezá a jugar!";
+}
+</script>
+
+</body>
+</html>
